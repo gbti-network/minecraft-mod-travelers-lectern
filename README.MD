@@ -83,7 +83,7 @@ Support our work by becoming a [GBTI Network member](https://gbti.network/member
 - 🌟 Star us on [GitHub](https://github.com/gbti-network/minecraft-mod-travelers-lectern)
 - 🐛 Report issues on our [Issue Tracker](https://github.com/gbti-network/minecraft-mod-travelers-lectern/issues)
 - 💡 Contribute through [Pull Requests](https://github.com/gbti-network/minecraft-mod-travelers-lectern/pulls)
-- ⭐ Rate us on [Modrinth](#)
+- ❤️ Heart us on [Modrinth](https://modrinth.com/mod/travelers-lectern)
 
 ## 📄 License
 
