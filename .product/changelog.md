@@ -1,4 +1,4 @@
 # Changelog
 
-## [1.2.8]
+## [1.2.9]
 - Initial release with basic lectern functionality
