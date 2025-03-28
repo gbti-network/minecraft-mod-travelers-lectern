@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "id": "travelers_lectern",
+  "version": "${version}",
+  "name": "TravelersLectern",
+  "description": "Provides a lectern that can regenerate the book that it is enabed with after a cooldown period.",
+  "authors": [
+    "gbti-network"
+  ],
+  "contributors": [
+    "DrarkaDev",
+    "atwellpub"
+  ],
+  "contact": {
+    "homepage": "https://gbti.network/",
+    "sources": "https://github.com/gbti-network/minecraft-mod-travelers-lectern"
+  },
+  "license": "GPL-3.0",
+  "icon": "assets/travelers_lectern/icon.png",
+  "environment": "server",
+  "entrypoints": {
+    "main": [
+      "com.gbti.travelerslectern.TravelersLectern"
+    ]
+  },
+  "mixins": [
+    "travelers_lectern.mixins.json",  
+    {
+      "config": "travelers_lectern.client.mixins.json",
+      "environment": "client"
+    }
+  ],
+  "depends": {
+    "fabricloader": ">=0.16.5",
+    "minecraft": "~1.21.1",
+    "java": ">=21",
+    "fabric-api": "*"
+  }
+}
