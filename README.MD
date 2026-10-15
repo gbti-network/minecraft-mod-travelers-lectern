@@ -69,7 +69,6 @@ This mod was built using:
 ### Join the GBTI Network! 🎮 🚀 💻
 The GBTI Network is more than just a community - it's a thriving ecosystem of developers, gamers, and creators! Our members enjoy:
 
-- 🎮 Access to our private Minecraft server
 - 💻 Exclusive development tools and resources
 - 📚 Private repositories and code libraries
 - 👥 Active Discord community for collaboration
