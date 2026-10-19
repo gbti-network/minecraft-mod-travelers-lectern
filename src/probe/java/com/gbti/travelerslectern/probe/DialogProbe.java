@@ -82,8 +82,8 @@ final class DialogProbe {
 
     void run(MinecraftServer server) throws Exception {
         ServerLevel overworld = server.overworld();
-        carol = ProbeSupport.join(server, "ProbeCarol");
-        command(server, server.createCommandSourceStack(), "op ProbeCarol");
+        carol = LecternTools.joinEmpty(server, "LecternCarol");
+        command(server, server.createCommandSourceStack(), "op LecternCarol");
 
         // Facing a plain lectern that holds a book, /lecterns offers to make it one
         LecternTools.place(overworld, DESK, LecternTools.book("Dialog Book", "Probe", "Desk page"));
@@ -188,10 +188,10 @@ final class DialogProbe {
                 "book on it " + hasBook(overworld, DESK) + ", " + describe());
 
         // Nothing the client sends is trusted: the level is checked on every click, the lectern looked up again
-        command(server, server.createCommandSourceStack(), "deop ProbeCarol");
+        command(server, server.createCommandSourceStack(), "deop LecternCarol");
         press("Done", Map.of());
         checks.check("dialog-refuses-non-op", cleared && chat.contains("Only operators can manage lecterns."), "chat " + oneLine(chat));
-        command(server, server.createCommandSourceStack(), "op ProbeCarol");
+        command(server, server.createCommandSourceStack(), "op LecternCarol");
         CompoundTag forged = new CompoundTag();
         forged.putString("dimension", OVERWORLD);
         forged.putInt("x", 999);

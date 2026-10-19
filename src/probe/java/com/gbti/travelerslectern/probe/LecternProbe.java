@@ -37,7 +37,6 @@ import static com.gbti.travelerslectern.probe.LecternTools.place;
 import static com.gbti.travelerslectern.probe.LecternTools.stand;
 import static com.gbti.travelerslectern.probe.LecternTools.title;
 import static com.gbti.travelerslectern.probe.ProbeSupport.command;
-import static com.gbti.travelerslectern.probe.ProbeSupport.join;
 import static com.gbti.travelerslectern.probe.ProbeSupport.oneLine;
 import static com.gbti.travelerslectern.probe.ProbeSupport.said;
 
@@ -177,9 +176,9 @@ public class LecternProbe implements ModInitializer {
 
     private void commandsAndTaking(MinecraftServer server) throws Exception {
         ServerLevel overworld = server.overworld();
-        op = join(server, "ProbeOp");
-        command(server, server.createCommandSourceStack(), "op ProbeOp");
-        alice = join(server, "ProbeAlice");
+        op = LecternTools.joinEmpty(server, "LecternOp");
+        command(server, server.createCommandSourceStack(), "op LecternOp");
+        alice = LecternTools.joinEmpty(server, "LecternAlice");
 
         // An operator faces a lectern holding a book and makes it a Traveler's Lectern
         place(overworld, MADE, LecternTools.book("Made Book", "Probe", "Made page"));

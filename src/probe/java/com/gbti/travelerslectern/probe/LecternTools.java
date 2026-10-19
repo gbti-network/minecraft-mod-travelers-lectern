@@ -8,6 +8,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundSystemChatPacket;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -39,6 +40,14 @@ final class LecternTools {
     static final String NETHER = "minecraft:the_nether";
 
     private LecternTools() {
+    }
+
+    // Traveler's Journal, when it runs beside this mod, gives every new player a journal, and a
+    // sneaking click with anything in hand never reaches the lectern; the checks start empty-handed
+    static ServerPlayer joinEmpty(MinecraftServer server, String name) {
+        ServerPlayer player = ProbeSupport.join(server, name);
+        player.getInventory().clearContent();
+        return player;
     }
 
     static ItemStack book(String title, String author, String... pages) {

@@ -154,6 +154,19 @@ still out, and it comes back once its cooldown has passed.
 npm run test:worlds
 ```
 
+### Beside Traveler's Journal
+
+Servers often run both mods, and both have dialogs and a click mixin at the same point. A run cell
+copies the jars in `EXTRA_MODS` into the server beside this one and waits for `EXTRA_UNTIL` as
+well, so both probes can run in one server; read the Journal probe's `DONE` line from the cell's
+log. The probes' mock players have their own names and start empty-handed, since the Journal gives
+every new player a journal.
+
+```bash
+EXTRA_MODS="travelers-journal-2.0.0.jar travelers-journal-2.0.0+mc26.3-probe.jar" EXTRA_UNTIL="[TJ-PROBE] DONE" \
+  scripts/test-matrix.sh run build/libs/travelers-lectern-2.0.0.jar build/libs/travelers-lectern-2.0.0+mc26.3-probe.jar 26.3
+```
+
 ## Releasing
 
 1. Set `mod_version` in `gradle.properties`, add a `## [<version>]` section to

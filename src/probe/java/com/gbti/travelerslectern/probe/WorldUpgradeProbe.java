@@ -67,7 +67,7 @@ class WorldUpgradeProbe {
         Lecterns.create(overworld, TAKEN, 86400);
         checks.check("before-made", title(get(OVERWORLD, KEPT)).equals("World Kept") && title(get(OVERWORLD, TAKEN)).equals("World Taken"),
                 LecternTools.place(get(OVERWORLD, KEPT)) + " / " + LecternTools.place(get(OVERWORLD, TAKEN)));
-        ServerPlayer reader = ProbeSupport.join(server, "ProbeMover");
+        ServerPlayer reader = LecternTools.joinEmpty(server, "LecternMover");
         LecternTools.click(reader, overworld, TAKEN, true);
         checks.check("before-taken", get(OVERWORLD, TAKEN).bookOut() && !hasBook(overworld, TAKEN), LecternTools.place(get(OVERWORLD, TAKEN)));
         server.getPlayerList().remove(reader);

@@ -25,6 +25,10 @@
 #                                                      one world moved to a later Minecraft
 #   test-matrix.sh world-upgrades <outdir> <old-jar> <old-probe> <old-version> <new-jar> <new-probe> <new-version>...
 #
+# A run cell also copies the jars in EXTRA_MODS (space-separated paths) into the server's mods, and
+# waits for the log line EXTRA_UNTIL as well, so another mod and its probe can run beside this one;
+# that probe's verdict is read from the cell's log by whoever asked for it.
+#
 # --widen tests a copy of the jar whose minecraft range is "*", to learn whether its code runs on
 # a version its range excludes. A matrix passes when no cell is FAIL, CRASH or ENV and every
 # version has exactly one PASS. A REFUSED cell counts only when Fabric names the jar's minecraft
@@ -205,9 +209,11 @@ run_one() { # jar probe version [--widen]
 	fi
 	work=$(workdir "$v" lectern)
 	cp "$probe" "$work/mods/"
+	# shellcheck disable=SC2086 # EXTRA_MODS is a space-separated list of jar paths
+	[[ ${EXTRA_MODS:-} ]] && cp $EXTRA_MODS "$work/mods/"
 	if [[ $widen ]]; then helper widen "$jar" "$work/mods/$(basename "$jar")"; else cp "$jar" "$work/mods/"; fi
 	log="$work/run.log"
-	boot "$work" "$log" "until:[TL-PROBE] DONE" "sleep:1" || rc=$?
+	boot "$work" "$log" "until:[TL-PROBE] DONE" ${EXTRA_UNTIL:+"until:$EXTRA_UNTIL"} "sleep:1" || rc=$?
 	(( rc == 1 )) && ready=0
 
 	if grep -qE 'Incompatible mods? (found|set)' "$log"; then
