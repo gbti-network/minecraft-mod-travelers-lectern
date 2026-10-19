@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "id": "travelers_lectern",
   "version": "${version}",
-  "name": "TravelersLectern",
-  "description": "Provides a lectern that can regenerate the book that it is enabed with after a cooldown period.",
+  "name": "Traveler's Lectern",
+  "description": "A lectern whose book comes back after a cooldown once a player takes it, and that only operators can break.",
   "authors": [
     "gbti-network"
   ],
@@ -23,17 +23,11 @@
       "com.gbti.travelerslectern.TravelersLectern"
     ]
   },
-  "mixins": [
-    "travelers_lectern.mixins.json",  
-    {
-      "config": "travelers_lectern.client.mixins.json",
-      "environment": "client"
-    }
-  ],
+  "mixins": ["travelers_lectern.mixins.json"],
   "depends": {
-    "fabricloader": ">=0.16.5",
-    "minecraft": ">=1.21 <1.21.2",
-    "java": ">=21",
+    "fabricloader": ">=0.16.10",
+    "minecraft": "${mc_range}",
+    "java": ">=${java_version}",
     "fabric-api": "*"
   }
 }

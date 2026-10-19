@@ -48,3 +48,16 @@ package-lock.json
 .product/assets
 .plans
 .env
+# fabric
+run/
+versions/*/run/
+
+# gbti
+.data/
+.snapshots/
+.product/assets
+scripts/.env
+.env
+node_modules/
+package-lock.json
+/*.jar

@@ -1,11 +1,12 @@
 {
   "required": true,
+  "minVersion": "0.8",
   "package": "com.gbti.travelerslectern.mixin",
-  "compatibilityLevel": "JAVA_21",
-  "mixins": [
-    "LecternBlockMixin"
-  ],
+  "compatibilityLevel": "${mixin_java}",
   "injectors": {
     "defaultRequire": 1
-  }
+  },
+  "mixins": [
+    "LecternBlockMixin"
+  ]
 }
