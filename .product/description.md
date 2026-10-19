@@ -1,14 +1,14 @@
 # Traveler's Lectern
 
-A Minecraft mod that implements lecterns with regenerating books. When a book is taken from a Traveler's Lectern, it will reappear after a configurable cooldown period.
+A Minecraft mod that makes lecterns with regenerating books. When a player takes the book from a Traveler's Lectern, it comes back after a cooldown you set.
 
 ## Features
 
-- Automatic book regeneration with configurable cooldown timers
-- Server-side implementation for multiplayer compatibility
-- Permission-based lectern management
-- Configuration via simple commands
-- Built for Minecraft 1.21.1 (Fabric Server Required)
+- The book comes back on the lectern one cooldown after a player takes it
+- Players read the book as usual, and take it by sneaking with an empty hand or with the lectern's Take Book button
+- An in-game lectern manager on Minecraft 1.21.6 and later: `/lecterns`
+- Only operators can break a Traveler's Lectern
+- One jar for Minecraft 1.20 to 1.20.4, 1.21 to 1.21.11 and 26.1 to 26.3 (Fabric Server Required)
 
 ## Use Cases
 
@@ -21,29 +21,37 @@ A Minecraft mod that implements lecterns with regenerating books. When a book is
 ## Technical Specifications
 
 **Requirements:**
-- Minecraft 1.21.1
-- Fabric Loader ≥0.16.5
+
+- Minecraft 1.20 to 1.20.4, 1.21 to 1.21.11 or 26.1 to 26.3
+- Fabric Loader 0.16.10 or newer
 - Fabric API
-- Java 21 or higher
+- The Java version your Minecraft needs: 17 for 1.20.x, 21 for 1.21.x, 25 for 26.x
 
 **Implementation Details:**
+
 - Server-side mod
 - No client-side installation required
+- The lectern manager is built from Minecraft's own dialog screens (1.21.6 and later)
 - Configurable debug logging
-- JSON-based data storage
+- JSON-based data storage, kept when you upgrade from an older release
 
 ## Commands
 
-Admin-level commands (requires permission level 4):
-- `/travelers_lectern create [time]`: Creates a new Traveler's Lectern
-- `/travelers_lectern edit [time]`: Modifies cooldown time
-- `/travelers_lectern destroy`: Removes Traveler's Lectern functionality
+Admin-level commands (requires permission level 4), used while looking at a lectern with a book on it:
+
+- `/lecterns`: Opens the lectern manager on 1.21.6 and later: the lectern you face, or a list of every Traveler's Lectern
+- `/travelers_lectern create [time]`: Creates a new Traveler's Lectern, with a cooldown in seconds
+- `/travelers_lectern edit <time>`: Modifies cooldown time
+- `/travelers_lectern destroy`: Turns it back into a plain lectern, putting a taken book back first
+
+From the manager, an admin can set the respawn time in minutes, give themselves a copy, use the book in their hand instead, put a taken book back now, or teleport to any Traveler's Lectern on the server.
 
 ## Configuration
 
 Settings are stored in `config/travelers-lectern/`:
+
 - `travelers_lectern_config.txt`: Debug settings
-- `travelers_lecterns.json`: Lectern data
+- `lecterns.json`: Lectern data. Releases before 2.0.0 used `travelers_lecterns.json`, which 2.0.0 imports and leaves as it was.
 
 ## Support
 
