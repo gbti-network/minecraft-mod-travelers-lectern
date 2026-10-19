@@ -1,0 +1,47 @@
+{
+  "5497558224836": {
+    "lastTimeUsed": 1000,
+    "cooldown": 10,
+    "worldKey": {
+      "field_25137": {
+        "field_13353": "minecraft",
+        "field_13355": "dimension"
+      },
+      "field_25138": {
+        "field_13353": "minecraft",
+        "field_13355": "overworld"
+      }
+    },
+    "item": "{components:{\"minecraft:written_book_content\":{author:\"Probe\",pages:[{raw:'\"Plain page\"'}],resolved:1b,title:{raw:\"Probe Rules\"}}},count:1,id:\"minecraft:written_book\"}"
+  },
+  "6597069852612": {
+    "lastTimeUsed": 2000,
+    "cooldown": 15,
+    "worldKey": {
+      "field_25137": {
+        "field_13353": "minecraft",
+        "field_13355": "dimension"
+      },
+      "field_25138": {
+        "field_13353": "minecraft",
+        "field_13355": "overworld"
+      }
+    },
+    "item": "{components:{\"minecraft:written_book_content\":{author:\"Inn Keeper\",pages:[{raw:'{\"bold\":false,\"color\":\"black\",\"extra\":[\"\\\\n\"],\"italic\":false,\"text\":\"Hello Traveler\",\"underlined\":false}'},{raw:'{\"bold\":true,\"color\":\"dark_red\",\"text\":\"Second page\"}'}],title:{raw:\"Probe Quests\"}}},count:1,id:\"minecraft:written_book\"}"
+  },
+  "5497558220864": {
+    "lastTimeUsed": 3000,
+    "cooldown": 86400,
+    "worldKey": {
+      "field_25137": {
+        "field_13353": "minecraft",
+        "field_13355": "dimension"
+      },
+      "field_25138": {
+        "field_13353": "minecraft",
+        "field_13355": "the_nether"
+      }
+    },
+    "item": "{components:{\"minecraft:written_book_content\":{author:\"Probe\",pages:[{raw:'\"Mind the lava\"'}],resolved:1b,title:{raw:\"Probe Nether Notes\"}}},count:1,id:\"minecraft:written_book\"}"
+  }
+}

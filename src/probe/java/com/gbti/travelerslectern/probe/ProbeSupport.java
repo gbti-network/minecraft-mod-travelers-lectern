@@ -1,0 +1,221 @@
+package com.gbti.travelerslectern.probe;
+
+import com.mojang.authlib.GameProfile;
+//? if >=1.20.2 <1.20.5 {
+/*import com.mojang.brigadier.exceptions.CommandSyntaxException;
+*///?}
+import io.netty.channel.embedded.EmbeddedChannel;
+import net.minecraft.commands.CommandSource;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.network.Connection;
+//? if >=1.20.2 <1.20.5 {
+/*import net.minecraft.network.ConnectionProtocol;
+*///?}
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.PacketFlow;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerPlayer;
+//? if >=1.20.2 {
+import net.minecraft.server.network.CommonListenerCookie;
+//?}
+//? if >=1.21.6 {
+import net.minecraft.util.ProblemReporter;
+import net.minecraft.world.level.storage.TagValueInput;
+//?}
+//? if >=1.21.11 {
+import net.minecraft.server.players.NameAndId;
+//?}
+//? if >=1.21.6 <1.21.11 {
+/*import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtAccounter;
+import net.minecraft.nbt.NbtIo;
+import net.minecraft.nbt.NbtUtils;
+import net.minecraft.util.datafix.DataFixTypes;
+import net.minecraft.world.level.storage.LevelResource;
+*///?}
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.ItemStack;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
+/** What every probe shares: mock players, commands, books, and the PASS/FAIL tally. */
+final class ProbeSupport {
+    static final Logger LOG = LogManager.getLogger("TLProbe");
+    // Each mock player's channel, which holds every packet the server sent that player
+    private static final Map<UUID, EmbeddedChannel> CHANNELS = new HashMap<>();
+
+    private ProbeSupport() {
+    }
+
+    static ServerPlayer join(MinecraftServer server, String name) {
+        // GameProfile became a record in later authlib versions, so its getter is not used
+        UUID uuid = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(StandardCharsets.UTF_8));
+        GameProfile profile = new GameProfile(uuid, name);
+        Connection connection = new Connection(PacketFlow.SERVERBOUND);
+        EmbeddedChannel channel = new EmbeddedChannel(connection);
+        channel.pipeline().addFirst(new PacketCheck.Encoder(server));
+        CHANNELS.put(uuid, channel);
+        // From 1.20.2 to 1.20.4 a connection reads its protocol from the channel before sending
+        //? if >=1.20.2 <1.20.5 {
+        /*channel.attr(Connection.ATTRIBUTE_SERVERBOUND_PROTOCOL).set(ConnectionProtocol.PLAY.codec(PacketFlow.SERVERBOUND));
+        channel.attr(Connection.ATTRIBUTE_CLIENTBOUND_PROTOCOL).set(ConnectionProtocol.PLAY.codec(PacketFlow.CLIENTBOUND));
+        *///?}
+        // 1.20.2 added the login cookie, and 1.20.5 its transfer flag
+        //? if >=1.20.5 {
+        CommonListenerCookie cookie = CommonListenerCookie.createInitial(profile, false);
+        //?} else if >=1.20.2 {
+        /*CommonListenerCookie cookie = CommonListenerCookie.createInitial(profile);
+        *///?}
+        //? if >=1.20.2 {
+        ServerPlayer player = new ServerPlayer(server, server.overworld(), profile, cookie.clientInformation());
+        //?} else {
+        /*ServerPlayer player = new ServerPlayer(server, server.overworld(), profile);
+        *///?}
+        // From 1.21.9 a login task reads the save before the player is placed, and placeNewPlayer no
+        // longer does, so a mock login reads it here as vanilla does
+        //? if >=1.21.11 {
+        server.getPlayerList().loadPlayerData(new NameAndId(profile))
+                .map(tag -> TagValueInput.create(ProblemReporter.DISCARDING, server.registryAccess(), tag))
+                .ifPresent(player::load);
+        //?} else if >=1.21.6 {
+        /*loadSave(server, player, uuid);
+        *///?}
+        //? if >=1.20.2 {
+        server.getPlayerList().placeNewPlayer(connection, player, cookie);
+        //?} else {
+        /*server.getPlayerList().placeNewPlayer(connection, player);
+        *///?}
+        return player;
+    }
+
+    //? if >=1.21.6 <1.21.11 {
+    /*// The 1.21.6 build also runs on 1.21.9 and 1.21.10, where the login task's loadPlayerData is
+    // out of its reach, so it reads the save file the way that method does. On 1.21.6 to 1.21.8,
+    // placeNewPlayer then reads it a second time, to the same result.
+    private static void loadSave(MinecraftServer server, ServerPlayer player, UUID uuid) {
+        Path file = server.getWorldPath(LevelResource.PLAYER_DATA_DIR).resolve(uuid + ".dat");
+        if (!Files.exists(file)) return;
+        try {
+            CompoundTag tag = NbtIo.readCompressed(file, NbtAccounter.unlimitedHeap());
+            tag = DataFixTypes.PLAYER.updateToCurrentVersion(server.getFixerUpper(), tag, NbtUtils.getDataVersion(tag, -1));
+            player.load(TagValueInput.create(ProblemReporter.DISCARDING, server.registryAccess(), tag));
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    *///?}
+    // Logs out (which saves the player) and logs back in as a fresh entity loaded from disk
+    static ServerPlayer rejoin(MinecraftServer server, ServerPlayer player, String name) {
+        server.getPlayerList().remove(player);
+        return join(server, name);
+    }
+
+    static EmbeddedChannel channel(ServerPlayer player) {
+        return CHANNELS.get(player.getUUID());
+    }
+
+    static void command(MinecraftServer server, CommandSourceStack source, String command) {
+        // performPrefixedCommand changed its return type in 1.20.3, so the probe for the jar that
+        // also covers 1.20.2 runs commands through Brigadier and reports a syntax error as the game does
+        //? if >=1.20.2 <1.20.5 {
+        /*try {
+            server.getCommands().getDispatcher().execute(command, source);
+        } catch (CommandSyntaxException e) {
+            source.sendFailure(Component.literal(e.getMessage()));
+        }
+        *///?} else {
+        server.getCommands().performPrefixedCommand(source, command);
+        //?}
+    }
+
+    // What a command says back to the console, success and failure alike
+    static String said(MinecraftServer server, String command) {
+        return said(server, server.createCommandSourceStack(), command);
+    }
+
+    // The last reply said() heard, with its styles, so a check can read where a link goes
+    static String lastStyled = "";
+
+    static String said(MinecraftServer server, CommandSourceStack source, String command) {
+        StringBuilder said = new StringBuilder();
+        StringBuilder styled = new StringBuilder();
+        command(server, source.withSource(new CommandSource() {
+            @Override
+            public void sendSystemMessage(Component message) {
+                said.append(message.getString()).append('\n');
+                styled.append(message).append('\n');
+            }
+
+            @Override
+            public boolean acceptsSuccess() {
+                return true;
+            }
+
+            @Override
+            public boolean acceptsFailure() {
+                return true;
+            }
+
+            @Override
+            public boolean shouldInformAdmins() {
+                return false;
+            }
+        }), command);
+        lastStyled = styled.toString();
+        return said.toString();
+    }
+
+    // The mock players join the overworld. Entity.level() is not used: its intermediary name
+    // changed in 1.21.9, so a probe built for 1.21.5 could not call it there.
+    static void use(MinecraftServer server, ServerPlayer player, InteractionHand hand) {
+        player.gameMode.useItem(player, server.overworld(), player.getItemInHand(hand), hand);
+    }
+
+    static String oneLine(String text) {
+        return text.replace("\n", "\\n");
+    }
+
+    /** The PASS/FAIL tally one probe run keeps. Each check logs one line. */
+    static final class Checks {
+        int passed;
+        int failed;
+
+        void check(String name, boolean ok, String detail) {
+            if (ok) {
+                passed++;
+                LOG.info("[TL-PROBE] PASS {}", name);
+            } else {
+                failed++;
+                LOG.info("[TL-PROBE] FAIL {}: {}", name, detail);
+            }
+        }
+
+        void guarded(Step step) {
+            try {
+                step.run();
+            } catch (Throwable t) {
+                failed++;
+                LOG.info("[TL-PROBE] FAIL threw: {}", t.toString());
+                LOG.error("[TL-PROBE] stack trace", t);
+            }
+        }
+
+        void done() {
+            LOG.info("[TL-PROBE] DONE pass={} fail={}", passed, failed);
+        }
+    }
+
+    interface Step {
+        void run() throws Exception;
+    }
+}
